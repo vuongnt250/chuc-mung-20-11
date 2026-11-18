@@ -1,6 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { Flower2, Heart, Sparkles } from 'lucide-react';
+import {
+  fetchLetterHearts,
+  getLetterSentStatus,
+  saveLetterHearts,
+} from '../services/databaseService';
 
 const LETTER_PARAGRAPHS = [
   'Có lẽ trong quãng đời học sinh, điều đáng nhớ nhất không chỉ là những bài học trên lớp, những giờ ra chơi hay những kỷ niệm cùng bạn bè, mà còn là sự xuất hiện của những người thầy, người cô đã âm thầm đồng hành và dìu dắt chúng em trưởng thành. Và đối với chúng em, cô chính là một người đặc biệt như thế.',
@@ -14,11 +19,17 @@ const LETTER_PARAGRAPHS = [
 
 export default function SpecialLetterSection() {
   const [hearts, setHearts] = useState(122);
-  const [sent, setSent] = useState(false);
+  const [sent, setSent] = useState(() => getLetterSentStatus());
+
+  useEffect(() => {
+    fetchLetterHearts().then((count) => setHearts(count));
+  }, []);
 
   const handleSendHeart = () => {
-    setHearts((prev) => prev + 1);
+    const nextHearts = hearts + 1;
+    setHearts(nextHearts);
     setSent(true);
+    saveLetterHearts(nextHearts);
     confetti({
       particleCount: 55,
       spread: 70,

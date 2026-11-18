@@ -9,49 +9,34 @@ import QuotesCarousel from './components/QuotesCarousel';
 import Footer from './components/Footer';
 import QrShareModal from './components/QrShareModal';
 import { INITIAL_WALL_POSTS } from './data/wishesData';
-
-const STORAGE_POSTS_KEY = 'trian2011_wall_posts';
-const STORAGE_LIKES_KEY = 'trian2011_liked_ids';
+import {
+  createWallPost,
+  fetchWallPosts,
+  getLikedIds,
+  saveLikedIds,
+  updatePostLikes,
+} from './services/databaseService';
 
 export default function App() {
   const [activePage, setActivePage] = useState('home'); // 'home' | 'studio'
   const [qrModalOpen, setQrModalOpen] = useState(false);
-  const [posts, setPosts] = useState(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_POSTS_KEY);
-      return saved ? JSON.parse(saved) : INITIAL_WALL_POSTS;
-    } catch {
-      return INITIAL_WALL_POSTS;
-    }
-  });
-
-  const [likedIds, setLikedIds] = useState(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_LIKES_KEY);
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
-  });
+  const [posts, setPosts] = useState(INITIAL_WALL_POSTS);
+  const [likedIds, setLikedIds] = useState(() => getLikedIds());
 
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_POSTS_KEY, JSON.stringify(posts));
-    } catch {
-      // Ignore storage quota errors
-    }
-  }, [posts]);
+    fetchWallPosts().then((loaded) => setPosts(loaded));
+  }, []);
 
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_LIKES_KEY, JSON.stringify(likedIds));
-    } catch {
-      // Ignore storage quota errors
-    }
+    saveLikedIds(likedIds);
   }, [likedIds]);
 
-  const handlePinToWall = (newPost) => {
+  const handlePinToWall = async (newPost) => {
     setPosts((prev) => [newPost, ...prev]);
+    const saved = await createWallPost(newPost);
+    if (saved.id !== newPost.id) {
+      setPosts((prev) => prev.map((p) => (p.id === newPost.id ? saved : p)));
+    }
   };
 
   const handleToggleLike = (postId) => {
@@ -59,12 +44,14 @@ export default function App() {
     setLikedIds((prev) =>
       alreadyLiked ? prev.filter((id) => id !== postId) : [...prev, postId]
     );
+
     setPosts((prev) =>
-      prev.map((post) =>
-        post.id === postId
-          ? { ...post, likes: Math.max(0, post.likes + (alreadyLiked ? -1 : 1)) }
-          : post
-      )
+      prev.map((post) => {
+        if (post.id !== postId) return post;
+        const nextLikes = Math.max(0, post.likes + (alreadyLiked ? -1 : 1));
+        updatePostLikes(postId, nextLikes);
+        return { ...post, likes: nextLikes };
+      })
     );
   };
 

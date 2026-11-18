@@ -1,15 +1,27 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { ArrowLeft, Check, Copy, Download, Palette, Send, Sparkles } from 'lucide-react';
 import { CARD_THEMES, SUGGESTED_WISHES, WISH_CATEGORIES } from '../data/wishesData';
 import { exportCardAsPng } from '../utils/cardExporter';
+import { getCardDraft, saveCardDraft } from '../services/databaseService';
 
 export default function CardStudio({ onPinToWall, onBackHome, onViewWall }) {
-  const [selectedThemeId, setSelectedThemeId] = useState(CARD_THEMES[0].id);
-  const [category, setCategory] = useState('chu-nhiem');
-  const [teacherName, setTeacherName] = useState('Cô Nguyễn Minh Hạnh');
-  const [senderName, setSenderName] = useState('Học trò lớp 12A');
-  const [message, setMessage] = useState(SUGGESTED_WISHES[0].text);
+  const initialDraft = getCardDraft();
+  const [selectedThemeId, setSelectedThemeId] = useState(
+    initialDraft?.selectedThemeId || CARD_THEMES[0].id
+  );
+  const [category, setCategory] = useState(initialDraft?.category || 'chu-nhiem');
+  const [teacherName, setTeacherName] = useState(
+    initialDraft?.teacherName ?? 'Cô Giáo Chủ Nhiệm 12A2'
+  );
+  const [senderName, setSenderName] = useState(initialDraft?.senderName ?? 'Thành viên 12A2');
+  const [message, setMessage] = useState(
+    initialDraft?.message ?? SUGGESTED_WISHES[0].text
+  );
+
+  useEffect(() => {
+    saveCardDraft({ selectedThemeId, category, teacherName, senderName, message });
+  }, [selectedThemeId, category, teacherName, senderName, message]);
   const [copied, setCopied] = useState(false);
   const [pinnedToast, setPinnedToast] = useState(false);
   const [exporting, setExporting] = useState(false);
