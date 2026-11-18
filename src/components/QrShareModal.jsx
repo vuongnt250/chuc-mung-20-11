@@ -2,16 +2,16 @@ import { useEffect, useState } from 'react';
 import QRCode from 'qrcode';
 import { Check, Copy, Download, Link2, QrCode, X } from 'lucide-react';
 
-export default function QrShareModal({ isOpen, onClose }) {
+export default function QrShareModal({ isOpen, onClose, targetUrl, title }) {
   const [url, setUrl] = useState('');
   const [qrDataUrl, setQrDataUrl] = useState('');
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (isOpen && typeof window !== 'undefined') {
-      setUrl((prev) => prev || window.location.href);
+      setUrl(targetUrl || window.location.href);
     }
-  }, [isOpen]);
+  }, [isOpen, targetUrl]);
 
   useEffect(() => {
     if (!isOpen || !url.trim()) {
@@ -88,7 +88,7 @@ export default function QrShareModal({ isOpen, onClose }) {
         </div>
 
         <h3 id="qr-modal-title" className="mt-2 font-serif text-2xl font-bold text-[#1E1D1B]">
-          Quét Mã Để Mở Trang 20/11
+          {title || 'Quét Mã Để Mở Trang 20/11'}
         </h3>
         <p className="mt-1 text-sm text-[#57524C]">
           Dán link GitHub Pages / Vercel của bạn hoặc dùng link hiện tại để tạo mã QR cho bạn bè

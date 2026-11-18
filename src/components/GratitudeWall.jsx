@@ -1,8 +1,14 @@
 import { useMemo, useState } from 'react';
-import { Heart, MessageSquareHeart, Search } from 'lucide-react';
+import { ExternalLink, Heart, MessageSquareHeart, QrCode, Search } from 'lucide-react';
 import { CARD_THEMES, WISH_CATEGORIES } from '../data/wishesData';
 
-export default function GratitudeWall({ posts, onToggleLike, likedIds }) {
+export default function GratitudeWall({
+  posts,
+  onToggleLike,
+  likedIds,
+  onOpenCardQr,
+  onViewPost,
+}) {
   const [filterCategory, setFilterCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -90,11 +96,16 @@ export default function GratitudeWall({ posts, onToggleLike, likedIds }) {
                 >
                   <div>
                     <div className="flex items-center justify-between gap-2">
-                      <span
-                        className="inline-block h-2.5 w-8 rounded-full"
-                        style={{ backgroundColor: theme.canvasBg[0] }}
-                        title={theme.name}
-                      />
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="inline-block h-2.5 w-8 rounded-full"
+                          style={{ backgroundColor: theme.canvasBg[0] }}
+                          title={theme.name}
+                        />
+                        <span className="font-mono text-[11px] text-[#66615B]">
+                          #{post.id}
+                        </span>
+                      </div>
                       <span className="text-[11px] font-semibold tracking-wider text-[#C85A32] uppercase">
                         {catLabel}
                       </span>
@@ -109,7 +120,7 @@ export default function GratitudeWall({ posts, onToggleLike, likedIds }) {
                     </p>
                   </div>
 
-                  <div className="mt-6 flex items-center justify-between border-t border-[#1E1D1B]/10 pt-4">
+                  <div className="mt-6 flex flex-wrap items-center justify-between gap-2 border-t border-[#1E1D1B]/10 pt-4">
                     <div>
                       <span className="font-script text-xl font-bold text-[#1B3B2B]">
                         {post.senderName}
@@ -117,21 +128,43 @@ export default function GratitudeWall({ posts, onToggleLike, likedIds }) {
                       <span className="ml-2 text-xs text-[#66615B]">• {post.date}</span>
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={() => onToggleLike(post.id)}
-                      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-all ${
-                        isLiked
-                          ? 'border-[#C85A32]/40 bg-[#C85A32]/10 text-[#C85A32]'
-                          : 'border-[#1E1D1B]/12 bg-[#FAF6EE] text-[#57524C] hover:border-[#C85A32]/40 hover:text-[#C85A32]'
-                      }`}
-                      aria-label="Thả tim lời chúc"
-                    >
-                      <Heart
-                        className={`h-3.5 w-3.5 ${isLiked ? 'fill-[#C85A32] text-[#C85A32]' : ''}`}
-                      />
-                      <span>{post.likes}</span>
-                    </button>
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => onViewPost(post)}
+                        className="inline-flex items-center gap-1 rounded-full border border-[#1E1D1B]/12 bg-[#FAF6EE] px-2.5 py-1.5 text-xs font-medium text-[#4A4640] transition hover:border-[#1B3B2B]/40 hover:text-[#1B3B2B]"
+                        title="Mở trang riêng của thiệp này"
+                      >
+                        <ExternalLink className="h-3.5 w-3.5" />
+                        <span className="hidden sm:inline">Xem</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => onOpenCardQr(post)}
+                        className="inline-flex items-center gap-1 rounded-full border border-[#1E1D1B]/12 bg-[#FAF6EE] px-2.5 py-1.5 text-xs font-medium text-[#4A4640] transition hover:border-[#C85A32]/40 hover:text-[#C85A32]"
+                        title="Tạo mã QR riêng cho thiệp này"
+                      >
+                        <QrCode className="h-3.5 w-3.5" />
+                        <span>QR</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => onToggleLike(post.id)}
+                        className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-all ${
+                          isLiked
+                            ? 'border-[#C85A32]/40 bg-[#C85A32]/10 text-[#C85A32]'
+                            : 'border-[#1E1D1B]/12 bg-[#FAF6EE] text-[#57524C] hover:border-[#C85A32]/40 hover:text-[#C85A32]'
+                        }`}
+                        aria-label="Thả tim lời chúc"
+                      >
+                        <Heart
+                          className={`h-3.5 w-3.5 ${isLiked ? 'fill-[#C85A32] text-[#C85A32]' : ''}`}
+                        />
+                        <span>{post.likes}</span>
+                      </button>
+                    </div>
                   </div>
                 </article>
               );
