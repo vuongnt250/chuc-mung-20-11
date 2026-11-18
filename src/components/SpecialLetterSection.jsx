@@ -55,6 +55,35 @@ export default function SpecialLetterSection() {
 
             <div className="mx-auto my-7 h-px w-28 bg-[#C6933A]/50" />
 
+            {/* Featured Photos: Cô giáo & Tập thể 12A2 */}
+            <div className="mb-8 grid gap-5 sm:grid-cols-12 sm:items-center">
+              <div className="overflow-hidden rounded-2xl border border-[#C6933A]/30 bg-[#FAF6EE] p-2 shadow-sm sm:col-span-7">
+                <div className="overflow-hidden rounded-xl">
+                  <img
+                    src="./images/co-giao-12a2.jpg"
+                    alt="Cô giáo chủ nhiệm 12A2 rạng rỡ trong tà áo dài"
+                    className="h-72 w-full object-cover object-top transition-transform duration-500 hover:scale-[1.03] sm:h-80"
+                  />
+                </div>
+                <p className="mt-2.5 text-center font-serif text-sm italic text-[#1B3B2B]">
+                  Cô giáo chủ nhiệm kính mến của tập thể 12A2
+                </p>
+              </div>
+
+              <div className="overflow-hidden rounded-2xl border border-[#1B3B2B]/20 bg-[#FAF6EE] p-2 shadow-sm sm:col-span-5">
+                <div className="overflow-hidden rounded-xl bg-[#0D1B2A]">
+                  <img
+                    src="./images/logo-12a2.jpg"
+                    alt="Biểu trưng tập thể lớp 12A2 — Thanh xuân có nhau là đủ"
+                    className="h-72 w-full object-contain transition-transform duration-500 hover:scale-[1.03] sm:h-80"
+                  />
+                </div>
+                <p className="mt-2.5 text-center font-serif text-sm italic text-[#C85A32]">
+                  “12A2 — Thanh xuân có nhau là đủ!”
+                </p>
+              </div>
+            </div>
+
             {/* Letter Body */}
             <div className="space-y-4 text-base leading-relaxed text-[#383430] sm:text-[17px]">
               {LETTER_PARAGRAPHS.map((paragraph, idx) => (
